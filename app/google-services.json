@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "572981221213",
+    "project_id": "chatter-6080e",
+    "storage_bucket": "chatter-6080e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572981221213:android:47d0a711990816c209fab4",
+        "android_client_info": {
+          "package_name": "com.example.chatter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBS7WVMe3a0M-sv6m5HdY9s3TgFcsjBQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

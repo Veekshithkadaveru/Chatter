@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.chatter"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.chatter"
@@ -47,7 +47,8 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes.add("/META-INF/{AL2.0,LGPL2.1,DEPENDENCIES}")
+            excludes.add("mozilla/public-suffix-list.txt")
         }
     }
 }
@@ -83,7 +84,5 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation ("com.google.firebase:firebase-messaging")
     implementation ("com.google.auth:google-auth-library-oauth2-http:1.19.0")
-
-    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
     implementation("com.guolindev.permissionx:permissionx:1.8.0")
 }
