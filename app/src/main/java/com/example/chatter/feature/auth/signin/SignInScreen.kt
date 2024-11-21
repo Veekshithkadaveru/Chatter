@@ -1,6 +1,7 @@
 package com.example.chatter.feature.auth.signin
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +39,7 @@ fun SignInScreen(navController: NavController) {
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize().background(Color.White)
                 .padding(paddingValues)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center,
@@ -72,7 +74,7 @@ fun SignInScreen(navController: NavController) {
                 Text(text = "Sign In")
             }
 
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = { navController.navigate("signup") }) {
                 Text(text = "Don't have a account? Sign Up")
             }
         }

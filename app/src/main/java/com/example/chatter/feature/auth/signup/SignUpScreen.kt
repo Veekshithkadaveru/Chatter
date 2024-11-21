@@ -94,7 +94,7 @@ fun SignUpScreen(navController: NavController) {
                 onClick = { /*TODO*/ }) {
                 Text(text = "Sign In")
             }
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = { navController.navigate("signin") }) {
                 Text(text = "Already have a account? Sign In")
             }
         }
