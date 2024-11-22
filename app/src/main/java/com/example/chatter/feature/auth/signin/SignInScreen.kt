@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.chatter.R
@@ -33,13 +36,17 @@ import com.example.chatter.R
 @Composable
 fun SignInScreen(navController: NavController) {
 
+    val viewModel: SignInViewModel = hiltViewModel()
+    val uiState = viewModel.state.collectAsState()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxSize().background(Color.White)
+                .fillMaxSize()
+                .background(Color.White)
                 .padding(paddingValues)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center,
@@ -69,13 +76,22 @@ fun SignInScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.size(16.dp))
 
-            Button(modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ }) {
-                Text(text = "Sign In")
-            }
+            if (uiState.value == SignInState.Loading) {
+                CircularProgressIndicator()
+            } else {
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { viewModel.signIn(email, password) },
+                    enabled = email.isNotEmpty() && password.isNotEmpty() &&
+                            (uiState.value == SignInState.Nothing ||
+                                    uiState.value == SignInState.Error)
+                ) {
+                    Text(text = "Sign In")
+                }
 
-            TextButton(onClick = { navController.navigate("signup") }) {
-                Text(text = "Don't have a account? Sign Up")
+                TextButton(onClick = { navController.navigate("signup") }) {
+                    Text(text = "Don't have a account? Sign Up")
+                }
             }
         }
     }
