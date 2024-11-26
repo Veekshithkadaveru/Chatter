@@ -26,12 +26,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.chatter.R
 
 @Composable
 fun SignUpScreen(navController: NavController) {
+    val viewModel:SignUpViewModel= hiltViewModel()
+
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -91,7 +94,9 @@ fun SignUpScreen(navController: NavController) {
             Button(modifier = Modifier.fillMaxWidth(),
                 enabled =  password.isNotEmpty() && confirmPassword.isNotEmpty() &&
                         password != confirmPassword,
-                onClick = { /*TODO*/ }) {
+                onClick = {
+                    viewModel.signUp(name, email, password)
+                }) {
                 Text(text = "Sign In")
             }
             TextButton(onClick = { navController.navigate("signin") }) {
