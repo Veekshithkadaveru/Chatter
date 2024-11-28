@@ -13,9 +13,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -29,11 +33,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
 
     val viewModel = hiltViewModel<HomeViewModel>()
     val channels = viewModel.channels.collectAsState()
+    val addChannel = remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     Scaffold(
         floatingActionButton = {
@@ -41,8 +48,8 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier
                     .padding(16.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color.Blue)
-                    .clickable { /* TODO*/ }
+                    .background(MaterialTheme.colorScheme.primary)
+                    .clickable { addChannel.value = true }
             ) {
                 Text(
                     text = "Add Channel",
@@ -71,6 +78,15 @@ fun HomeScreen(navController: NavController) {
 
                     )
                 }
+            }
+        }
+    }
+
+    if (addChannel.value) {
+        ModalBottomSheet(onDismissRequest = { addChannel.value = false }, sheetState = sheetState) {
+            AddChannelDialog {
+                viewModel.addChannel(it)
+                addChannel.value = false
             }
         }
     }
