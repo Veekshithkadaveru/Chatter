@@ -31,7 +31,7 @@ class ChatViewModel @Inject constructor() : ViewModel() {
             null
         )
 
-        db.getReference("messages").child(channelID).push().setValue(message)
+        db.reference.child("messages").child(channelID).push().setValue(message)
     }
 
     fun listenForMessages(channelID: String) {

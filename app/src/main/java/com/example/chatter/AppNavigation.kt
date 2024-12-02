@@ -33,7 +33,7 @@ fun AppNavigation() {
             composable("home") {
                 HomeScreen(navController)
             }
-            composable("chat/{channel}", arguments = listOf(
+            composable("chat/{channelId}", arguments = listOf(
                 navArgument("channelId") {
                     type = NavType.StringType
                 }
