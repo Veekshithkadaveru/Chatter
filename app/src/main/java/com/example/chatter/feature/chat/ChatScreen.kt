@@ -3,6 +3,7 @@ package com.example.chatter.feature.chat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -38,16 +40,26 @@ import com.google.firebase.ktx.Firebase
 @Composable
 fun ChatScreen(navController: NavController, channelId: String) {
 
-    val viewModel: ChatViewModel = hiltViewModel()
+    Scaffold {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
 
-    LaunchedEffect(key1 = true) {
-        viewModel.listenForMessages(channelId)
+
+            val viewModel: ChatViewModel = hiltViewModel()
+
+            LaunchedEffect(key1 = true) {
+                viewModel.listenForMessages(channelId)
+            }
+            val messages = viewModel.message.collectAsState()
+
+            ChatMessages(messages = messages.value, onSendMessage = { message ->
+                viewModel.sendMessage(channelId, message)
+            })
+        }
     }
-    val messages = viewModel.message.collectAsState()
-
-    ChatMessages(messages = messages.value, onSendMessage = { message ->
-        viewModel.sendMessage(channelId, message)
-    })
 }
 
 @Composable
@@ -67,7 +79,7 @@ fun ChatMessages(messages: List<Message>, onSendMessage: (String) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.CenterEnd)
+                .align(Alignment.BottomCenter)
                 .padding(8.dp)
                 .background(Color.LightGray),
             verticalAlignment = Alignment.CenterVertically
@@ -100,20 +112,18 @@ fun ChatBubble(message: Message) {
     val isCurrentUser = message.senderId == Firebase.auth.currentUser?.uid
     val bubbleColor = if (isCurrentUser) Color.Blue else Color.Green
 
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp, horizontal = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.Bottom
     ) {
-        val alignment = if (isCurrentUser) Alignment.CenterStart else Alignment.CenterEnd
+        val alignment = if (!isCurrentUser) Alignment.CenterStart else Alignment.CenterEnd
 
         Box(
-            contentAlignment = alignment,
             modifier = Modifier
                 .padding(8.dp)
                 .background(color = bubbleColor, shape = RoundedCornerShape(8.dp))
+                .align(alignment)
         ) {
             Text(
                 text = message.message,
