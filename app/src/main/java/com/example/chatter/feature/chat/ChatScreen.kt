@@ -1,7 +1,6 @@
 package com.example.chatter.feature.chat
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -111,7 +110,21 @@ fun ChatBubble(message: Message) {
 
     val isCurrentUser = message.senderId == Firebase.auth.currentUser?.uid
     val bubbleColor = if (isCurrentUser) Color.Blue else Color.Green
-
+    val bubbleShape = if (isCurrentUser) {
+        RoundedCornerShape(
+            topStart = 16.dp,
+            topEnd = 0.dp,
+            bottomEnd = 16.dp,
+            bottomStart = 16.dp
+        )
+    } else {
+        RoundedCornerShape(
+            topStart = 0.dp,
+            topEnd = 16.dp,
+            bottomEnd = 16.dp,
+            bottomStart = 16.dp
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -122,7 +135,7 @@ fun ChatBubble(message: Message) {
         Box(
             modifier = Modifier
                 .padding(8.dp)
-                .background(color = bubbleColor, shape = RoundedCornerShape(8.dp))
+                .background(color = bubbleColor, shape = bubbleShape)
                 .align(alignment)
         ) {
             Text(
