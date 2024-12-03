@@ -5,12 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -34,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,17 +117,11 @@ fun HomeScreen(navController: NavController) {
                 }
 
                 items(channels.value) { channel ->
-                    Text(
-                        text = channel.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color.Red.copy(alpha = 0.3f))
-                            .clickable { navController.navigate("chat/${channel.id}&${channel.name}") }
-                            .padding(16.dp)
-
-                    )
+                    Column (modifier = Modifier.padding(8.dp)){
+                        ChannelItem(channelName = channel.name) {
+                            navController.navigate("chat/${channel.id}&${channel.name}")
+                        }
+                    }
                 }
             }
         }
@@ -137,6 +135,36 @@ fun HomeScreen(navController: NavController) {
             }
         }
     }
+}
+
+@Composable
+fun ChannelItem(channelName: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.DarkGray)
+            .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box (modifier = Modifier
+            .padding(12.dp)
+            .size(50.dp)
+            .clip(CircleShape)
+            .background(Color.Yellow.copy(alpha = 0.3f))
+            ){
+            Text(
+                text = channelName[0].uppercaseChar().toString(),
+                color = Color.White,
+                fontSize = 35.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+
+        Text(text = channelName, modifier = Modifier.padding(8.dp), color = Color.White)
+    }
+
 }
 
 @Composable
