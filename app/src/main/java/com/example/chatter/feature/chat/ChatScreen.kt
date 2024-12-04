@@ -1,5 +1,8 @@
 package com.example.chatter.feature.chat
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,10 +20,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -48,6 +53,20 @@ import com.google.firebase.ktx.Firebase
 @Composable
 fun ChatScreen(navController: NavController, channelId: String) {
 
+    val chooserDialog = remember { mutableStateOf(false) }
+
+    val cameraImageUri = remember { mutableStateOf<Uri?>(null) }
+
+    val cameraImageLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture())
+        { success ->
+            if (success) {
+                cameraImageUri.value?.let {
+                    TODO("Send image to Server")
+                }
+            }
+        }
+
     Scaffold(containerColor = Color.Black) {
 
         Column(
@@ -68,7 +87,31 @@ fun ChatScreen(navController: NavController, channelId: String) {
                 viewModel.sendMessage(channelId, message)
             })
         }
+
+        if (chooserDialog.value) {
+            ContentSelectionDialog(onCameraSelected = { }, onGallerySelected = {})
+        }
+
     }
+}
+
+@Composable
+fun ContentSelectionDialog(onCameraSelected: () -> Unit, onGallerySelected: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = { },
+        confirmButton = {
+            TextButton(onClick = onCameraSelected) {
+                Text(text = "Camera", color = Color.White)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onGallerySelected) {
+                Text(text = "Gallery", color = Color.White)
+            }
+        },
+        title = { Text(text = "Select your source") },
+        text = { Text(text = "Would you like to pick an image from the gallery or use the") }
+    )
 }
 
 @Composable
@@ -129,8 +172,6 @@ fun ChatMessages(messages: List<Message>, onSendMessage: (String) -> Unit) {
             }
         }
     }
-
-
 }
 
 @Composable
