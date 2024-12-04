@@ -17,14 +17,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,6 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.chatter.R
 import com.example.chatter.model.Message
+import com.example.chatter.ui.theme.DarkGrey
+import com.example.chatter.ui.theme.Purple
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -89,10 +89,17 @@ fun ChatMessages(messages: List<Message>, onSendMessage: (String) -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(8.dp)
-                .background(Color.LightGray),
+                .background(DarkGrey)
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            IconButton(onClick = { msg.value = "" }) {
+                Image(
+                    painter = painterResource(id = R.drawable.attach),
+                    contentDescription = "Attach Files"
+                )
+
+            }
             TextField(value = msg.value, onValueChange = { msg.value = it },
                 modifier = Modifier.weight(1f),
                 placeholder = { Text(text = "Type a Message") },
@@ -101,13 +108,24 @@ fun ChatMessages(messages: List<Message>, onSendMessage: (String) -> Unit) {
                     onDone = {
                         hideKeyboardController?.hide()
                     }
+                ),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = DarkGrey,
+                    unfocusedContainerColor = DarkGrey,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedPlaceholderColor = Color.White,
+                    unfocusedPlaceholderColor = Color.White
                 )
             )
             IconButton(onClick = {
                 onSendMessage(msg.value)
                 msg.value = ""
             }) {
-                Icon(imageVector = Icons.Filled.Send, contentDescription = "Send")
+                Image(
+                    painter = painterResource(id = R.drawable.send),
+                    contentDescription = "Send"
+                )
             }
         }
     }
@@ -121,7 +139,7 @@ fun ChatBubble(message: Message) {
     val isCurrentUser = message.senderId == Firebase.auth.currentUser?.uid
     val textColor = if (isCurrentUser)
         MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onBackground
-    val bubbleColor = if (isCurrentUser) Color.DarkGray else Color.LightGray
+    val bubbleColor = if (isCurrentUser) Purple else Color.LightGray
     val bubbleShape = if (isCurrentUser) {
         RoundedCornerShape(
             topStart = 26.dp,
@@ -159,7 +177,7 @@ fun ChatBubble(message: Message) {
                         .size(40.dp)
                         .clip(CircleShape),
 
-                )
+                    )
             }
 
             Spacer(modifier = Modifier.width(8.dp))
