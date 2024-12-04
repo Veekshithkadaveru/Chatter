@@ -1,6 +1,7 @@
 package com.example.chatter.feature.chat
 
 import android.net.Uri
+import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -41,6 +42,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.chatter.R
@@ -49,6 +51,10 @@ import com.example.chatter.ui.theme.DarkGrey
 import com.example.chatter.ui.theme.Purple
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ChatScreen(navController: NavController, channelId: String) {
@@ -92,6 +98,20 @@ fun ChatScreen(navController: NavController, channelId: String) {
             ContentSelectionDialog(onCameraSelected = { }, onGallerySelected = {})
         }
 
+        fun createImageUri(): Uri {
+            val timeStamp =
+                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val storageDir =
+                navController.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                    ?: throw IllegalStateException("External storage directory is unavailable")
+            return FileProvider.getUriForFile(
+                navController.context,
+                "${navController.context.packageName}.provider",
+                File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir).apply {
+                    cameraImageUri.value = Uri.fromFile(this)
+                }
+            )
+        }
     }
 }
 
