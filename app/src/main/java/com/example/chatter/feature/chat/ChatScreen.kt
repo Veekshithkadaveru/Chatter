@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.chatter.R
 import com.example.chatter.model.Message
 import com.example.chatter.ui.theme.DarkGrey
@@ -64,12 +65,14 @@ fun ChatScreen(navController: NavController, channelId: String) {
 
     val cameraImageUri = remember { mutableStateOf<Uri?>(null) }
 
+    val viewModel: ChatViewModel = hiltViewModel()
+
     val cameraImageLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture())
         { success ->
             if (success) {
                 cameraImageUri.value?.let {
-                    TODO("Send image to Server")
+                    viewModel.sendImageMessage(it, channelId)
                 }
             }
         }
@@ -104,7 +107,6 @@ fun ChatScreen(navController: NavController, channelId: String) {
                 .padding(it)
         ) {
 
-            val viewModel: ChatViewModel = hiltViewModel()
 
             LaunchedEffect(key1 = true) {
                 viewModel.listenForMessages(channelId)
@@ -272,15 +274,25 @@ fun ChatBubble(message: Message) {
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            Text(
-                text = message.message.trim(),
-                color = textColor,
+            Box(
                 modifier = Modifier
-                    .background(color = bubbleColor, shape = bubbleShape)
+                    .background(color = bubbleColor,shape = bubbleShape)
                     .padding(8.dp)
+            ) {
+                if (message.imageUrl != null) {
+                    AsyncImage(
+                        model = message.imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier.size(200.dp)
+                    )
+                } else {
+                    Text(
+                        text = message.message?.trim() ?: "",
+                        color = textColor,
 
-            )
-
+                    )
+                }
+            }
         }
     }
 }
