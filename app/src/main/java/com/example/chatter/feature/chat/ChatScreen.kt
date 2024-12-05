@@ -1,5 +1,6 @@
 package com.example.chatter.feature.chat
 
+import android.Manifest
 import android.net.Uri
 import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -73,6 +74,28 @@ fun ChatScreen(navController: NavController, channelId: String) {
             }
         }
 
+    fun createImageUri(): Uri {
+        val timeStamp =
+            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir =
+            navController.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                ?: throw IllegalStateException("External storage directory is unavailable")
+        return FileProvider.getUriForFile(
+            navController.context,
+            "${navController.context.packageName}.provider",
+            File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir).apply {
+                cameraImageUri.value = Uri.fromFile(this)
+            }
+        )
+    }
+
+    val permissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                cameraImageLauncher.launch(createImageUri())
+            }
+        }
+
     Scaffold(containerColor = Color.Black) {
 
         Column(
@@ -80,7 +103,6 @@ fun ChatScreen(navController: NavController, channelId: String) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-
 
             val viewModel: ChatViewModel = hiltViewModel()
 
@@ -91,26 +113,26 @@ fun ChatScreen(navController: NavController, channelId: String) {
 
             ChatMessages(messages = messages.value, onSendMessage = { message ->
                 viewModel.sendMessage(channelId, message)
-            })
+            },
+                onImageClicked = {
+                    chooserDialog.value = true
+                })
         }
 
         if (chooserDialog.value) {
-            ContentSelectionDialog(onCameraSelected = { }, onGallerySelected = {})
-        }
+            ContentSelectionDialog(
+                onCameraSelected = {
+                    chooserDialog.value = false
 
-        fun createImageUri(): Uri {
-            val timeStamp =
-                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val storageDir =
-                navController.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                    ?: throw IllegalStateException("External storage directory is unavailable")
-            return FileProvider.getUriForFile(
-                navController.context,
-                "${navController.context.packageName}.provider",
-                File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir).apply {
-                    cameraImageUri.value = Uri.fromFile(this)
-                }
-            )
+                    if (navController.context.checkSelfPermission(Manifest.permission.CAMERA)
+                        == android.content.pm.PackageManager.PERMISSION_GRANTED
+                    ) {
+                        cameraImageLauncher.launch(createImageUri())
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                },
+                onGallerySelected = { chooserDialog.value = false })
         }
     }
 }
@@ -135,7 +157,11 @@ fun ContentSelectionDialog(onCameraSelected: () -> Unit, onGallerySelected: () -
 }
 
 @Composable
-fun ChatMessages(messages: List<Message>, onSendMessage: (String) -> Unit) {
+fun ChatMessages(
+    messages: List<Message>,
+    onSendMessage: (String) -> Unit,
+    onImageClicked: () -> Unit
+) {
 
     val msg = remember { mutableStateOf("") }
     val hideKeyboardController = LocalSoftwareKeyboardController.current
@@ -156,7 +182,10 @@ fun ChatMessages(messages: List<Message>, onSendMessage: (String) -> Unit) {
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { msg.value = "" }) {
+            IconButton(onClick = {
+                msg.value = ""
+                onImageClicked()
+            }) {
                 Image(
                     painter = painterResource(id = R.drawable.attach),
                     contentDescription = "Attach Files"
