@@ -16,10 +16,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -54,6 +56,28 @@ fun HomeScreen(navController: NavController) {
     val sheetState = rememberModalBottomSheetState()
 
     Scaffold(
+        topBar = {
+            Row( modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Messages",
+                    color = Color.Gray,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black,
+                    modifier = Modifier.padding(16.dp)
+                )
+                IconButton(onClick = { navController.navigate("signin") }) {
+                    Icon(
+                        imageVector = Icons.Filled.ExitToApp,
+                        contentDescription = "Logout",
+                        tint = Color.White
+                    )
+                }
+            }
+        },
         floatingActionButton = {
             Box(
                 modifier = Modifier
@@ -77,16 +101,6 @@ fun HomeScreen(navController: NavController) {
                 .fillMaxSize()
         ) {
             LazyColumn {
-
-                item {
-                    Text(
-                        text = "Messages",
-                        color = Color.Gray,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Black,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
 
                 item {
                     TextField(
@@ -117,7 +131,7 @@ fun HomeScreen(navController: NavController) {
                 }
 
                 items(channels.value) { channel ->
-                    Column (modifier = Modifier.padding(8.dp)){
+                    Column(modifier = Modifier.padding(8.dp)) {
                         ChannelItem(channelName = channel.name) {
                             navController.navigate("chat/${channel.id}&${channel.name}")
                         }
@@ -147,12 +161,13 @@ fun ChannelItem(channelName: String, onClick: () -> Unit) {
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box (modifier = Modifier
-            .padding(12.dp)
-            .size(50.dp)
-            .clip(CircleShape)
-            .background(Color.Yellow.copy(alpha = 0.3f))
-            ){
+        Box(
+            modifier = Modifier
+                .padding(12.dp)
+                .size(50.dp)
+                .clip(CircleShape)
+                .background(Color.Yellow.copy(alpha = 0.3f))
+        ) {
             Text(
                 text = channelName[0].uppercaseChar().toString(),
                 color = Color.White,

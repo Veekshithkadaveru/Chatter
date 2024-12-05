@@ -145,12 +145,12 @@ fun ContentSelectionDialog(onCameraSelected: () -> Unit, onGallerySelected: () -
         onDismissRequest = { },
         confirmButton = {
             TextButton(onClick = onCameraSelected) {
-                Text(text = "Camera", color = Color.White)
+                Text(text = "Camera", color = Color.Black)
             }
         },
         dismissButton = {
             TextButton(onClick = onGallerySelected) {
-                Text(text = "Gallery", color = Color.White)
+                Text(text = "Gallery", color = Color.Black)
             }
         },
         title = { Text(text = "Select your source") },
