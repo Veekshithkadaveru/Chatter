@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -75,6 +76,11 @@ fun ChatScreen(navController: NavController, channelId: String) {
                     viewModel.sendImageMessage(it, channelId)
                 }
             }
+        }
+
+    val imageLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let { viewModel.sendImageMessage(it, channelId) }
         }
 
     fun createImageUri(): Uri {
@@ -134,7 +140,10 @@ fun ChatScreen(navController: NavController, channelId: String) {
                         permissionLauncher.launch(Manifest.permission.CAMERA)
                     }
                 },
-                onGallerySelected = { chooserDialog.value = false })
+                onGallerySelected = {
+                    chooserDialog.value = false
+                    imageLauncher.launch("image/*")
+                })
         }
     }
 }
@@ -276,21 +285,22 @@ fun ChatBubble(message: Message) {
 
             Box(
                 modifier = Modifier
-                    .background(color = bubbleColor,shape = bubbleShape)
+                    .background(color = bubbleColor, shape = bubbleShape)
                     .padding(8.dp)
             ) {
                 if (message.imageUrl != null) {
                     AsyncImage(
                         model = message.imageUrl,
                         contentDescription = null,
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(200.dp),
+                        contentScale = ContentScale.Crop
                     )
                 } else {
                     Text(
                         text = message.message?.trim() ?: "",
                         color = textColor,
 
-                    )
+                        )
                 }
             }
         }
