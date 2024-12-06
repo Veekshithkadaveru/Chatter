@@ -134,7 +134,10 @@ fun HomeScreen(navController: NavController) {
 
                 items(channels.value) { channel ->
                     Column(modifier = Modifier.padding(8.dp)) {
-                        ChannelItem(channelName = channel.name) {
+                        ChannelItem(
+                            channelName = channel.name,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
+                        ) {
                             navController.navigate("chat/${channel.id}&${channel.name}")
                         }
                     }
@@ -154,7 +157,7 @@ fun HomeScreen(navController: NavController) {
 }
 
 @Composable
-fun ChannelItem(channelName: String, onClick: () -> Unit) {
+fun ChannelItem(channelName: String, modifier: Modifier, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

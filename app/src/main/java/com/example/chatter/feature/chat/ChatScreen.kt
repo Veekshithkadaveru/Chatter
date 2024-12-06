@@ -49,6 +49,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.chatter.R
+import com.example.chatter.feature.home.ChannelItem
 import com.example.chatter.model.Message
 import com.example.chatter.ui.theme.DarkGrey
 import com.example.chatter.ui.theme.Purple
@@ -119,12 +120,14 @@ fun ChatScreen(navController: NavController, channelId: String, channelName: Str
             }
             val messages = viewModel.message.collectAsState()
 
-            ChatMessages(messages = messages.value, onSendMessage = { message ->
-                viewModel.sendMessage(channelId, message)
-            },
+            ChatMessages(
+                messages = messages.value, onSendMessage = { message ->
+                    viewModel.sendMessage(channelId, message)
+                },
                 onImageClicked = {
                     chooserDialog.value = true
-                })
+                }, channelName = channelName
+            )
         }
 
         if (chooserDialog.value) {
@@ -169,6 +172,7 @@ fun ContentSelectionDialog(onCameraSelected: () -> Unit, onGallerySelected: () -
 
 @Composable
 fun ChatMessages(
+    channelName: String,
     messages: List<Message>,
     onSendMessage: (String) -> Unit,
     onImageClicked: () -> Unit
@@ -178,7 +182,13 @@ fun ChatMessages(
     val hideKeyboardController = LocalSoftwareKeyboardController.current
 
     Column(modifier = Modifier.fillMaxSize()) {
+
         LazyColumn(modifier = Modifier.weight(1f)) {
+            item {
+                ChannelItem(channelName = channelName, modifier = Modifier) {
+
+                }
+            }
             items(messages) { message ->
                 ChatBubble(message = message)
 
