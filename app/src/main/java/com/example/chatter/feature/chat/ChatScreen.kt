@@ -60,7 +60,7 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun ChatScreen(navController: NavController, channelId: String) {
+fun ChatScreen(navController: NavController, channelId: String, channelName: String) {
 
     val chooserDialog = remember { mutableStateOf(false) }
 
@@ -177,8 +177,8 @@ fun ChatMessages(
     val msg = remember { mutableStateOf("") }
     val hideKeyboardController = LocalSoftwareKeyboardController.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn {
+    Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.weight(1f)) {
             items(messages) { message ->
                 ChatBubble(message = message)
 
@@ -188,7 +188,6 @@ fun ChatMessages(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
                 .background(DarkGrey)
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically

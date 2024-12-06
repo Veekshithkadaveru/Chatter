@@ -57,11 +57,13 @@ fun HomeScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            Row( modifier = Modifier
-                .fillMaxWidth()
-                .padding(2.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = "Messages",
                     color = Color.Gray,
