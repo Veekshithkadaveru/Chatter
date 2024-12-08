@@ -1,6 +1,7 @@
 package com.example.chatter.feature.chat
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.chatter.model.Message
 import com.google.firebase.auth.ktx.auth
@@ -9,6 +10,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +23,7 @@ class ChatViewModel @Inject constructor() : ViewModel() {
     val message = _messages.asStateFlow()
     val db = Firebase.database
 
-    fun sendMessage(channelID: String, messageText: String?,image:String?=null) {
+    fun sendMessage(channelID: String, messageText: String?, image: String? = null) {
 
         val message = Message(
             db.reference.push().key ?: UUID.randomUUID().toString(),
@@ -49,9 +51,9 @@ class ChatViewModel @Inject constructor() : ViewModel() {
             }.addOnCompleteListener { task ->
                 val currentUser = Firebase.auth.currentUser
 
-                if (task.isSuccessful){
-                    val downloadUri=task.result
-                    sendMessage(channelID,null,downloadUri.toString())
+                if (task.isSuccessful) {
+                    val downloadUri = task.result
+                    sendMessage(channelID, null, downloadUri.toString())
                 }
             }
 
@@ -74,7 +76,17 @@ class ChatViewModel @Inject constructor() : ViewModel() {
                 override fun onCancelled(error: DatabaseError) {
 
                 }
-
             })
+        subscribeForNotification(channelID)
+    }
+
+    private fun subscribeForNotification(channelID: String) {
+        FirebaseMessaging.getInstance().subscribeToTopic("group_$channelID").addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.d("ChatViewModel", "subscribed to topic:group_$channelID")
+            } else {
+                Log.d("ChatViewModel", "Failed to subscribe to topic:group_$channelID")
+            }
+        }
     }
 }
