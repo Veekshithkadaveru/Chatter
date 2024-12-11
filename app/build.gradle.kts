@@ -49,6 +49,10 @@ android {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1,DEPENDENCIES}")
             excludes.add("mozilla/public-suffix-list.txt")
+            excludes +="META-INF/LICENSE"
+            excludes +="META-INF/LICENSE.txt"
+            excludes +="META-INF/NOTICE"
+            excludes +="META-INF/NOTICE.txt"
         }
     }
 }

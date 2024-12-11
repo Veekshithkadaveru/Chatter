@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.chatter.R
 import com.example.chatter.model.Message
+import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -42,6 +44,11 @@ class ChatViewModel @Inject constructor(@ApplicationContext val context: Context
         )
 
         db.reference.child("messages").child(channelID).push().setValue(message)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    postNotificationToUsers(channelID, message.senderName, messageText ?: "")
+                }
+            }
     }
 
     fun sendImageMessage(uri: Uri, channelID: String) {
@@ -96,7 +103,7 @@ class ChatViewModel @Inject constructor(@ApplicationContext val context: Context
         }
     }
 
-    fun postNotificationToUsers(channelID: String, senderName: String, messageContent: String) {
+    private fun postNotificationToUsers(channelID: String, senderName: String, messageContent: String) {
         val fcmUrl = "https://fcm.googleapis.com/v1/projects/chatter-6080e/messages:send"
         val jsonBody = JSONObject().apply {
             put("message", JSONObject().apply {
@@ -125,7 +132,7 @@ class ChatViewModel @Inject constructor(@ApplicationContext val context: Context
 
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["Authorization"] = "Access Token"
+                headers["Authorization"] = "Bearer ${getAccessToken()}"
                 headers["Content-Type"] = "application/json"
                 return headers
             }
@@ -133,5 +140,12 @@ class ChatViewModel @Inject constructor(@ApplicationContext val context: Context
 
         val queue = Volley.newRequestQueue(context)
         queue.add(request)
+    }
+
+    private fun getAccessToken(): String {
+        val inputStream = context.resources.openRawResource(R.raw.chatter_key)
+        val googleCreds = GoogleCredentials.fromStream(inputStream)
+            .createScoped(listOf("https://www.googleapis.com/auth/firebase.messaging"))
+        return googleCreds.refreshAccessToken().tokenValue
     }
 }
