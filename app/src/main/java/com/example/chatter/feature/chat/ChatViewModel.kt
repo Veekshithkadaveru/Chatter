@@ -18,13 +18,14 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.ktx.storage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.json.JSONObject
 import java.util.UUID
 import javax.inject.Inject
-
+@HiltViewModel
 class ChatViewModel @Inject constructor(@ApplicationContext val context: Context) : ViewModel() {
 
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
