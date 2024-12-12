@@ -90,4 +90,5 @@ dependencies {
     implementation ("com.google.firebase:firebase-messaging")
     implementation ("com.google.auth:google-auth-library-oauth2-http:1.19.0")
     implementation("com.guolindev.permissionx:permissionx:1.8.0")
+    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
 }
