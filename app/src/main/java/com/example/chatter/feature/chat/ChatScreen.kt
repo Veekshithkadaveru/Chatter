@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -55,6 +56,7 @@ import com.example.chatter.ui.theme.DarkGrey
 import com.example.chatter.ui.theme.Purple
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -312,6 +314,23 @@ fun ChatBubble(message: Message) {
                         )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CallButton(isVideoCall: Boolean, onClick: () -> Unit) {
+    AndroidView(
+        factory = { context ->
+            val button = ZegoSendCallInvitationButton(context)
+            button.setIsVideoCall(isVideoCall)
+            button.resourceID = "zego_data"
+            button
+        },
+        modifier = Modifier.size(50.dp)
+    ) { zegoCallButton ->
+        zegoCallButton.setOnClickListener { _ ->
+            onClick()
         }
     }
 }
