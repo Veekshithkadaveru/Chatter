@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.chatter.feature.chat.CallButton
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,33 +160,56 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun ChannelItem(channelName: String, modifier: Modifier, onClick: () -> Unit) {
-    Row(
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(Color.DarkGray)
-            .clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .padding(12.dp)
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(Color.Yellow.copy(alpha = 0.3f))
+                .align(Alignment.CenterStart)
+                .clickable { onClick() },
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = channelName[0].uppercaseChar().toString(),
-                color = Color.White,
-                fontSize = 35.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            Box(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(Color.Yellow.copy(alpha = 0.3f))
+            ) {
+                Text(
+                    text = channelName[0].uppercaseChar().toString(),
+                    color = Color.White,
+                    fontSize = 35.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            Text(text = channelName, modifier = Modifier.padding(8.dp), color = Color.White)
         }
+        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
 
-        Text(text = channelName, modifier = Modifier.padding(8.dp), color = Color.White)
+            CallButton(isVideoCall = true) {
+                it.setInvitees(
+                    mutableListOf(
+                        ZegoUIKitUser("", "")
+                    )
+                )
+            }
+
+            CallButton(isVideoCall = false) {
+                it.setInvitees(
+                    mutableListOf(
+                        ZegoUIKitUser("", "")
+                    )
+                )
+            }
+        }
     }
-
 }
 
 @Composable

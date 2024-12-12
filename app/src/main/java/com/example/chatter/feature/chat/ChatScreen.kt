@@ -319,7 +319,7 @@ fun ChatBubble(message: Message) {
 }
 
 @Composable
-fun CallButton(isVideoCall: Boolean, onClick: () -> Unit) {
+fun CallButton(isVideoCall: Boolean, onClick: (ZegoSendCallInvitationButton) -> Unit) {
     AndroidView(
         factory = { context ->
             val button = ZegoSendCallInvitationButton(context)
@@ -330,7 +330,7 @@ fun CallButton(isVideoCall: Boolean, onClick: () -> Unit) {
         modifier = Modifier.size(50.dp)
     ) { zegoCallButton ->
         zegoCallButton.setOnClickListener { _ ->
-            onClick()
+            onClick(zegoCallButton)
         }
     }
 }
