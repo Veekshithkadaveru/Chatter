@@ -30,6 +30,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,12 +47,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.chatter.AppID
+import com.example.chatter.AppSign
+import com.example.chatter.MainActivity
 import com.example.chatter.feature.chat.CallButton
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
+
+    val context = LocalContext.current as MainActivity
+    LaunchedEffect(Unit) {
+        Firebase.auth.currentUser?.let {
+            context.initZegoService(
+                appID = AppID,
+                appSign = AppSign,
+                userID = it.email!!,
+                userName = it.email!!
+            )
+        }
+    }
 
     val viewModel = hiltViewModel<HomeViewModel>()
     val channels = viewModel.channels.collectAsState()

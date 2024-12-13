@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.chatter"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -90,5 +90,5 @@ dependencies {
     implementation ("com.google.firebase:firebase-messaging")
     implementation ("com.google.auth:google-auth-library-oauth2-http:1.19.0")
     implementation("com.guolindev.permissionx:permissionx:1.8.0")
-    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
+    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:3.9.0")
 }
