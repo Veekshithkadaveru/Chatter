@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+chatter_key.json
+google-services.json
