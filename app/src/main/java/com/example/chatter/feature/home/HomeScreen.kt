@@ -71,7 +71,11 @@ fun HomeScreen(navController: NavController) {
                     fontWeight = FontWeight.Black,
                     modifier = Modifier.padding(16.dp)
                 )
-                IconButton(onClick = { navController.navigate("signin") }) {
+                IconButton(onClick = { navController.navigate("signin"){
+                    popUpTo(navController.graph.startDestinationId){
+                        inclusive=true
+                    }
+                } }) {
                     Icon(
                         imageVector = Icons.Filled.ExitToApp,
                         contentDescription = "Logout",
